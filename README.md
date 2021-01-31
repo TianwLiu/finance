@@ -4,7 +4,7 @@ finance
 
 //register
 //"http://localhost:8080/register",
- $.ajax(
+$.ajax(
         "http://localhost:8080/register",
         {
             type:"post",
