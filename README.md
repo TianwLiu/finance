@@ -52,7 +52,7 @@ $.ajax(
 
 //following api don't need user_id or group_id anymore, but you can use it as a way to decevie the hacker  
 //return [one] cashFlow and [one] sum of transactions of accesstokens(all online accounts of all banks) within that user_id and type: json  
-/auth/transactions/get  
+http://localhost:8080/auth/transactions/get  
 ```
 {
  cash_flow: {
@@ -97,7 +97,7 @@ $.ajax(
 ```
 //return one [cashFlow] for [one] list of transactions and one [sum] of transactions of accesstokens(all online accounts of all banks) within user_ids of given group_id and type: json  
 //combine all user_id's transactions into one transactions and get the indicators of that transactions  
-/auth/group/transactions/get  
+http://localhost:8080/auth/group/transactions/get  
 ```
 {
  cash_flow: {
