@@ -1,11 +1,14 @@
+
 finance
-
+=============================================  
 1.0 server's api is defined as following
+_____________________________________________
 
-#register
-#"http://localhost:8080/register",
 
-···$.ajax(
+#register   
+http://localhost:8080/register  
+```
+ $.ajax(
         "http://localhost:8080/register",
         {
             type:"post",
@@ -17,10 +20,11 @@ finance
 
         }
     );
-···
-#//logIn
-#http://localhost:8080/logIn
+```
 
+#logIn  
+http://localhost:8080/logIn  
+```
 $.ajax(
         "http://localhost:8080/logIn",
         {
@@ -43,12 +47,13 @@ $.ajax(
 
         }
     );
+```
 
 
-
-//following api don't need user_id or group_id anymore, but you can use it as a way to decevie the hacker
-//return [one] cashFlow and [one] sum of transactions of accesstokens(all online accounts of all banks) within that user_id and type: json
-/auth/transactions/get
+//following api don't need user_id or group_id anymore, but you can use it as a way to decevie the hacker  
+//return [one] cashFlow and [one] sum of transactions of accesstokens(all online accounts of all banks) within that user_id and type: json  
+/auth/transactions/get  
+```
 {
  cash_flow: {
     Income: 602.74,
@@ -89,10 +94,11 @@ $.ajax(
 	]
 	
 }
-
-//return one [cashFlow] for [one] list of transactions and one [sum] of transactions of accesstokens(all online accounts of all banks) within user_ids of given group_id and type: json
-//combine all user_id's transactions into one transactions and get the indicators of that transactions
-/auth/group/transactions/get
+```
+//return one [cashFlow] for [one] list of transactions and one [sum] of transactions of accesstokens(all online accounts of all banks) within user_ids of given group_id and type: json  
+//combine all user_id's transactions into one transactions and get the indicators of that transactions  
+/auth/group/transactions/get  
+```
 {
  cash_flow: {
     Income: 602.74,
@@ -133,10 +139,11 @@ $.ajax(
 	]
 	
 }
+```
 
-
-//return real time balances of accesstokens(all online accounts of all banks) within that user_id （non-real-time）
-http://localhost:8080/auth/accounts/get?real_time=[false/true]
+//return real time balances of accesstokens(all online accounts of all banks) within that user_id （non-real-time）   
+http://localhost:8080/auth/accounts/get?real_time=[false/true]  
+```
 {
 user_id:"user_id"
 cash_base: { depository_balance: 2021.93, credit_liability: 37.4 },
@@ -175,9 +182,10 @@ accounts:[
 	  },...
 	]
 }
-
-//return real time balances of accesstokens(all online accounts of all banks) within that user_id (non-real-time)
-http://localhost:8080/auth/group/accounts/get?real_time=[false/true]
+```
+//return real time balances of accesstokens(all online accounts of all banks) within that user_id (non-real-time)  
+http://localhost:8080/auth/group/accounts/get?real_time=[false/true]  
+```
 {
 group_id:"group_id",
 cash_base: { depository_balance: 2021.93, credit_liability: 37.4 },
@@ -225,9 +233,12 @@ user_accounts_list:[
 	]
 
 }
+```
 
-//postPublicToken
-http://localhost:8080/auth/postPublicToken
+//postPublicToken  
+http://localhost:8080/auth/postPublicToken  
+
+```
 $.ajax(
         "http://localhost:8080/postPublicToken",
         {
@@ -238,20 +249,22 @@ $.ajax(
 
         }
     );
+```
 
-
-//getLinkToken
-http://localhost:8080/auth/getLinkToken
+//getLinkToken  
+http://localhost:8080/auth/getLinkToken  
+```
 $.post(
         "http://localhost:8080/getLinkToken",
             {"user_id": user_id},
             openLinkToken
     );
+```
 
 
-
-//addGroupMember
-http://localhost:8080/auth/group/addMember
+//addGroupMember  
+http://localhost:8080/auth/group/addMember  
+```
   $.ajax(
         "http://localhost:8080/auth/group/addMember",
         {
@@ -270,10 +283,11 @@ http://localhost:8080/auth/group/addMember
 
         }
     );
+```
 
-
-//delGroupMember
-http://localhost:8080/auth/group/delMember
+//delGroupMember  
+http://localhost:8080/auth/group/delMember  
+```
 function delMember(memberId){
     $.ajax(
         "http://localhost:8080/auth/group/delMember",
@@ -294,4 +308,15 @@ function delMember(memberId){
         }
     );
 }
+```
+
+
+
+
+
+
+
+
+
+
 
