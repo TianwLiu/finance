@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -20,9 +21,6 @@ func init()  {
 	bindWebApi()
 
 }
-
-
-
 
 
 func webServerStart(hostAndPort string,crtFilename string,privateKey string){
@@ -52,6 +50,18 @@ func webServerStart(hostAndPort string,crtFilename string,privateKey string){
 	}
 
 
+}
+
+func webServerShutdown(){
+	if server==nil{
+		fmt.Println("-->web server not running, no need to close")
+	}else{
+		fmt.Println("-->closing web server")
+		if err:=server.Shutdown(context.Background());err!=nil{
+			fmt.Printf("-->web server shutting down%v",err)
+		}
+		fmt.Println("-->webserver closed")
+	}
 }
 
 func bindWebApi()  {

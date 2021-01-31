@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 )
 
 type SystemConf struct {
@@ -67,6 +68,16 @@ func systemStart(systemPass string,ENV string,hostAndPort string,serverCrt strin
 
 
 }
+func systemExit(){
+
+	fmt.Println("system: shutting down")
+	webServerShutdown()
+	closeDatabase()
+	fmt.Println("system: good byte!")
+
+	os.Exit(0)
+}
+
 
 func systemSetup(systemPass string,plaidClientID string,plaidSandboxSecret string,plaidDevelopmentSecret string) error{
 

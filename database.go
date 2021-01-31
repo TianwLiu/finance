@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/boltdb/bolt"
 )
 var db *bolt.DB
@@ -17,6 +18,38 @@ func init()  {
 	if err!=nil{
 		panic(err)
 	}
+	if err=backUpDatabase("finance_last_start.db.bak");err!=nil{
+		fmt.Println("database back up of [start stage] failed",err.Error())
+	}
+
+}
+
+func closeDatabase(){
+	if db==nil{
+		fmt.Println("-->database not running, no need to close")
+	}else{
+
+		fmt.Println("----->database backing up")
+		if err:=backUpDatabase("finance_last_close.db.bak");err!=nil{
+			fmt.Println(err.Error())
+		}else{
+			fmt.Println("-->database back up finish")
+		}
+		fmt.Println("-->database closing")
+		if err:=db.Close();err!=nil{
+			fmt.Println(err.Error())
+		}else{
+			fmt.Println("-->database closed")
+		}
+	}
+}
+
+func backUpDatabase(bakFilePath string )error{
+
+	return db.View(func(tx *bolt.Tx) error {
+		return tx.CopyFile(bakFilePath,0666)
+
+	})
 
 }
 

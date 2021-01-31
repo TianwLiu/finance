@@ -1,3 +1,5 @@
 /finance.db
 /finance.trytolog.com.crt
 /finance.trytolog.com.key
+/finance_last_close.db.bak
+/finance_last_start.db.bak
