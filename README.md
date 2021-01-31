@@ -4,7 +4,7 @@ finance
 
 //register
 //"http://localhost:8080/register",
-···
+、、、
 $.ajax(
         "http://localhost:8080/register",
         {
@@ -17,7 +17,7 @@ $.ajax(
 
         }
     );
-···
+、、、
 //logIn
 http://localhost:8080/logIn
 $.ajax(
