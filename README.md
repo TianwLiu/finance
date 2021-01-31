@@ -3,7 +3,7 @@ finance
 1.0 server's api is defined as following
 
 //register
-"http://localhost:8080/register",
+//"http://localhost:8080/register",
  $.ajax(
         "http://localhost:8080/register",
         {
