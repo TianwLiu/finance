@@ -22,9 +22,10 @@ func menuShow(){
 }
 func menuCheck(){
 	if args.systemPass!=""{
+		fmt.Println("Check successful")
 		fmt.Println(systemCheck(args.systemPass))
 	}else{
-		fmt.Println("wrong args, please check")
+		fmt.Println("Wrong , please check")
 		flag.Usage()
 
 	}
