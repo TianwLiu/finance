@@ -8,7 +8,7 @@ type Args struct{
 	setup bool
 	check bool
 	show bool
-
+	daemon bool
 	systemPass string
 	env string
 	hostAndPort string
@@ -24,6 +24,7 @@ func init()  {
 	flag.BoolVar(&args.setup,"s",false,"setup all system conf, web user or web group")
 	flag.BoolVar(&args.check,"v",false,"verify system")
 	flag.BoolVar(&args.show,"l",false,"list database content")
+	flag.BoolVar(&args.daemon,"d",false,"run with a daemon")
 
 	flag.StringVar(&args.hostAndPort,"addr",":10016","set the listen `address` for the server\n " +
 		"ex: [127.0.0.1:8080], [:8080], [www.website.name:8080], default:[:10016]")

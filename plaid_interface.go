@@ -38,3 +38,5 @@ func getAccessToken(publicToken string) (string,error){
 	accessTokenResponse,err := plaidClient.ExchangePublicToken(publicToken)
 	return accessTokenResponse.AccessToken,err
 }
+
+

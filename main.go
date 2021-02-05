@@ -4,16 +4,26 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"os/signal"
 	"syscall"
 )
+const debug=false
+var childCmd exec.Cmd
 
 func main()  {
+
+	if debug{
+
+		os.Exit(0)
+	}
+
 	defer func() {
 		systemExit()
 	}()
 
 	flag.Parse()
+
 	switch {
 	case args.help:
 		flag.Usage()
@@ -27,7 +37,7 @@ func main()  {
 	case args.setup:
 			menuSetUp()
 		return
-	case args.start:
+	case args.start&&!args.daemon:
 		if args.systemPass!=""&&args.env!=""{
 			go func() {
 				systemStart(args.systemPass,args.env,args.hostAndPort,args.crtFilePath,args.privateKeyPath)
@@ -39,6 +49,12 @@ func main()  {
 			flag.Usage()
 			return
 		}
+	case args.start&&args.daemon:
+		go func() {
+			fmt.Println("enter daemon mode")
+			startDaemon(args.systemPass,args.env,args.hostAndPort,args.crtFilePath,args.privateKeyPath)
+		}()
+		listenSignal()
 	default:
 		flag.Usage()
 	}
@@ -46,6 +62,7 @@ func main()  {
 }
 
 func listenSignal(){
+
 	c:=make(chan os.Signal,4)
 	signal.Notify(c,syscall.SIGINT,syscall.SIGTERM,syscall.SIGQUIT,syscall.SIGHUP)
 
@@ -59,4 +76,6 @@ func listenSignal(){
 	}
 
 }
+
+
 

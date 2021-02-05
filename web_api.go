@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/plaid/plaid-go/plaid"
-	"sort"
+	"strconv"
 	"time"
 )
 
@@ -112,7 +112,52 @@ func getGroupBalances(webClient *gin.Context) {
 
 }
 
+func  getCashFlows(webClient *gin.Context)  {
+	userId :=webClient.Keys["id"].(string)
+	months,_:=strconv.Atoi(webClient.Query("months"))
+	accessTokens,err:= getUserAccessTokens(userId)
+	if err!=nil {
+		webClient.JSON(200,err.Error())
+		return
+	}
 
+	//refresh plaid transactions' record, current client didn't buy refresh product.
+	/*
+		responseRefresh, err := plaidClient.RefreshTransactions(accessTokens);
+		if err!=nil  {
+			fmt.Println(err)
+			return
+		}else{
+			fmt.Println(responseRefresh.RequestID)
+		}
+	*/
+
+	today:=time.Now().Format("2006-01-02")
+	dayThreeMonthBefore:=time.Now().AddDate(0,-1*months,0).Format("2006-01-02")
+	var accounts []plaid.Account
+	var transactions []plaid.Transaction
+	for _,accessToken := range accessTokens {
+		response,_:=plaidClient.GetTransactions(accessToken,dayThreeMonthBefore,today)
+		accounts = append(accounts, response.Accounts...)
+		transactions = append(transactions, response.Transactions...)
+	}
+
+	sortTransactions(transactions)
+	//splitTransactions(transactions)
+	var cashFlows []CashFlow
+	for _,transactionsUnit:=range splitTransactions(transactions){
+		cashFlows=append(cashFlows, NewCashFlow(transactionsUnit,accounts))
+	}
+
+
+	//response.RequestID="sd"
+	//cashflow:=NewCashFlow(response)
+	if err!=nil{
+		webClient.JSON(200,err)
+	}else{
+		webClient.JSON(200, cashFlows)
+	}
+}
 //serve transactions with user_id ,now it will return 3 month transactions
 //return date type refer to data_type.go file
 func getTransactions(webClient *gin.Context) {
@@ -144,7 +189,8 @@ func getTransactions(webClient *gin.Context) {
 		transactions = append(transactions, response.Transactions...)
 	}
 
-	const shorterm = "2006-01-02"
+	sortTransactions(transactions)
+	/*const shorterm = "2006-01-02"
 	sort.Slice(transactions, func(i, j int) bool {
 		time1,_:=time.Parse(shorterm,transactions[i].Date)
 		time2,_:=time.Parse(shorterm,transactions[j].Date)
@@ -152,20 +198,89 @@ func getTransactions(webClient *gin.Context) {
 			return true
 		}
 		return false
-	})
+	})*/
 
 	//response.RequestID="sd"
-	//cashflow:=NewSheets(response)
+	//cashflow:=NewCashFlow(response)
 	if err!=nil{
 		webClient.JSON(200,err)
 	}else{
 		webClient.JSON(200,UserTransactions{
-			CashFlow:     NewSheets(transactions,accounts),
-			Transactions:transactions,
+			CashFlow:     NewCashFlow(transactions,accounts),
+			Transactions: transactions,
 		})
 	}
 }
 
+func getGroupCashFlows(webClient *gin.Context)  {
+	groupId :=webClient.Keys["id"].(string)
+	months,_:=strconv.Atoi(webClient.Query("months"))
+	userIds,err:=getGroupMemberID(groupId)
+	if err!=nil{
+		webClient.JSON(200,err.Error())
+		return
+	}
+
+	//webClient.JSON(200,userIds)
+	var accessTokens []string
+	for _, userId :=range userIds {
+		accessTokensSub, _ := getUserAccessTokens(userId)
+		accessTokens = append(accessTokens, accessTokensSub...)
+	}
+
+
+
+	//refresh plaid transactions' record, current client didn't buy refresh product.
+	/*
+		responseRefresh, err := plaidClient.RefreshTransactions(accessTokens);
+		if err!=nil  {
+			fmt.Println(err)
+			return
+		}else{
+			fmt.Println(responseRefresh.RequestID)
+		}
+	*/
+	if accessTokens==nil{
+		webClient.JSON(200,gin.H{
+			"flag":false,
+			"error":"the group has no any accessTokens",
+		})
+		return
+	}
+	today:=time.Now().Format("2006-01-02")
+	dayThreeMonthBefore:=time.Now().AddDate(0,-1*months,0).Format("2006-01-02")
+	var accounts []plaid.Account
+	var transactions []plaid.Transaction
+	for _,accessToken := range accessTokens {
+		response,_:=plaidClient.GetTransactions(accessToken,dayThreeMonthBefore,today)
+		accounts = append(accounts, response.Accounts...)
+		transactions = append(transactions, response.Transactions...)
+	}
+
+	sortTransactions(transactions)
+	//splitTransactions(transactions)
+	var cashFlows []CashFlow
+	for _,transactionsUnit:=range splitTransactions(transactions){
+		cashFlows=append(cashFlows, NewCashFlow(transactionsUnit,accounts))
+	}
+	/*const shorTerm = "2006-01-02"
+	sort.Slice(transactions, func(i, j int) bool {
+		time1,_:=time.Parse(shorTerm,transactions[i].Date)
+		time2,_:=time.Parse(shorTerm,transactions[j].Date)
+		if time1.After(time2) {
+			return true
+		}
+		return false
+	})*/
+
+	//response.RequestID="sd"
+	//cashflow:=NewCashFlow(response)
+	if err!=nil{
+		webClient.JSON(200,err.Error())
+	}else{
+		webClient.JSON(200,cashFlows)
+	}
+}
 //serve group transactions with user_id ,now it will return 3 month transactions
 //return date type refer to data_type.go file
 func getGroupTransactions(webClient *gin.Context )  {
@@ -211,8 +326,8 @@ func getGroupTransactions(webClient *gin.Context )  {
 		accounts = append(accounts, response.Accounts...)
 		transactions = append(transactions, response.Transactions...)
 	}
-
-	const shorTerm = "2006-01-02"
+	sortTransactions(transactions)
+	/*const shorTerm = "2006-01-02"
 	sort.Slice(transactions, func(i, j int) bool {
 		time1,_:=time.Parse(shorTerm,transactions[i].Date)
 		time2,_:=time.Parse(shorTerm,transactions[j].Date)
@@ -220,20 +335,21 @@ func getGroupTransactions(webClient *gin.Context )  {
 			return true
 		}
 		return false
-	})
+	})*/
 
 	//response.RequestID="sd"
-	//cashflow:=NewSheets(response)
+	//cashflow:=NewCashFlow(response)
 	if err!=nil{
 		webClient.JSON(200,err.Error())
 	}else{
 		webClient.JSON(200,GroupTransactions{
-			CashFlow:    NewSheets(transactions,accounts),
+			CashFlow:     NewCashFlow(transactions,accounts),
 			Transactions: transactions,
 		})
 	}
 
 }
+
 
 func postPublicToken(webClient *gin.Context)  {
 	userId:=webClient.Keys["id"].(string)

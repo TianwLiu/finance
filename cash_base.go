@@ -27,3 +27,4 @@ func NewCashBase(accounts []plaid.Account)  CashBase{
 	}
 
 }
+

@@ -26,11 +26,11 @@ type GroupAccounts struct {
 }
 
 type UserTransactions struct {
-	CashFlow Sheets `json:"cash_flow"`
+	CashFlow     CashFlow            `json:"cash_flow"`
 	Transactions []plaid.Transaction `json:"transactions"`
 }
 
 type GroupTransactions struct {
-	CashFlow Sheets `json:"cash_flow"`
+	CashFlow     CashFlow            `json:"cash_flow"`
 	Transactions []plaid.Transaction `json:"transactions"`
 }

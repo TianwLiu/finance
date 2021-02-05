@@ -5,3 +5,5 @@
 /finance_last_start.db.bak
 /finance
 /finance.db.lock
+
+daemon_mode_child_process.log

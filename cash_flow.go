@@ -33,7 +33,7 @@ type IncomeSheet struct{
 }
 
 //class holding all data of one person
-type Sheets struct {
+type CashFlow struct {
 	Income       float64          `json:"Income"`
 	Expense      float64          `json:"Expense"`
 	Assest       float64          `json:"Assest"`
@@ -42,8 +42,8 @@ type Sheets struct {
 	Indicators   FinanceIndicator `json:"Indicators"`
 }
 
-//build Sheets object
-func NewSheets(transactions []plaid.Transaction,accounts []plaid.Account) Sheets {
+//build CashFlow object
+func NewCashFlow(transactions []plaid.Transaction,accounts []plaid.Account) CashFlow {
 
 
 	//get accountId of checking account, credit account
@@ -122,7 +122,7 @@ func NewSheets(transactions []plaid.Transaction,accounts []plaid.Account) Sheets
 		expenseAmount +=transaction.Amount
 	}
 
-	sheets:= Sheets{
+	sheets:= CashFlow{
 		Income:       incomeAmount,
 		Expense:      expenseAmount,
 		Assest:       0,
@@ -136,7 +136,7 @@ func NewSheets(transactions []plaid.Transaction,accounts []plaid.Account) Sheets
 }
 
 //get all Indicators used to show in front end
-func (sheets *Sheets)getIndicator() FinanceIndicator {
+func (sheets *CashFlow)getIndicator() FinanceIndicator {
 	return FinanceIndicator{
 		sheets.Income -sheets.Liability -sheets.Expense,
 		sheets.Income_sheet.Passive_income,

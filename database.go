@@ -39,8 +39,10 @@ func closeDatabase(){
 		if err:=db.Close();err!=nil{
 			fmt.Println(err.Error())
 		}else{
+			db=nil
 			fmt.Println("-->database closed")
 		}
+
 	}
 }
 
