@@ -131,18 +131,30 @@ func NewCashFlow(transactions []plaid.Transaction,accounts []plaid.Account) Cash
 
 	}
 	sheets.Indicators =sheets.getIndicator()
-
 	return sheets
 }
 
 //get all Indicators used to show in front end
 func (sheets *CashFlow)getIndicator() FinanceIndicator {
-	return FinanceIndicator{
-		sheets.Income -sheets.Liability -sheets.Expense,
-		sheets.Income_sheet.Passive_income,
-		sheets.Income /(sheets.Liability +sheets.Expense),
-		sheets.Income_sheet.Passive_income /(sheets.Liability +sheets.Expense),
+
+	financeIndicator:=FinanceIndicator{
+			R_finance_accumulation: sheets.Income -sheets.Liability -sheets.Expense,
+			R_current_interest:     sheets.Income_sheet.Passive_income,
+			R_finance_health:       0,
+			R_finance_indepence:    0,
 		}
+	if (sheets.Liability +sheets.Expense)!=0{
+		financeIndicator.R_finance_health=sheets.Income /(sheets.Liability +sheets.Expense)
+	}else{
+		financeIndicator.R_finance_health=-1
+	}
+	if (sheets.Liability +sheets.Expense)!=0{
+		financeIndicator.R_finance_indepence=sheets.Income_sheet.Passive_income /(sheets.Liability +sheets.Expense)
+	}else{
+		financeIndicator.R_finance_indepence=-1
+	}
+
+	return financeIndicator
 }
 
 

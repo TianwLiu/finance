@@ -123,8 +123,8 @@ func getGroupAccounts(webClient *gin.Context) {
 			}
 
 		}
-		//groupAccounts = append(groupAccounts, accounts...)
 
+		groupAccounts = append(groupAccounts, accounts...)
 		if accounts != nil {
 			userAccountsList = append(userAccountsList, UserAccounts{userId, NewCashBase(accounts), accounts})
 		}
