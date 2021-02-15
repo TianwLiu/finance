@@ -1,16 +1,12 @@
 package main
 
-import (
-	"github.com/plaid/plaid-go/plaid"
-)
-
 type CashBase struct {
 	DepositoryBalance float64 `json:"depository_balance"`
 	CreditLiability	float64 `json:"credit_liability"`
 
 }
 
-func NewCashBase(accounts []plaid.Account)  CashBase{
+func NewCashBase(accounts []AccountPlus)  CashBase{
 
 	var depositoryBalance,creditLiablity float64
 	for _,account:=range accounts {

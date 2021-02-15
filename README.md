@@ -50,9 +50,27 @@ $.ajax(
 ```
 
 
+cashFlow response
+```
+jsonlist:
+	0:
+		Assest: 0
+		Expense: 2973.1599999999994
+		Income: 3588.5699999999997
+		Income_sheet:
+		Passive_income: 0
+		
+		Indicators:
+			R_current_interest: 0
+			R_finance_accumulation: 615.4100000000003
+			R_finance_health: 1.2069885239946725
+			R_finance_indepence: 0
+
+```
+
 //following api don't need user_id or group_id anymore, but you can use it as a way to decevie the hacker  
 //return [one] cashFlow and [one] sum of transactions of accesstokens(all online accounts of all banks) within that user_id and type: json  
-http://localhost:8080/auth/transactions/get  
+/auth/transactions/get  
 ```
 {
  cash_flow: {
@@ -71,7 +89,7 @@ http://localhost:8080/auth/transactions/get
   
  transactions:[
     {
-      account_id: '8eK70YNEvVuqeB6aLDRwfjnrKx5nnYIyd81Kx',
+      account_id: '8eK70YKx5nnYIyd81Kx',
       amount: 21.04,
       iso_currency_code: 'USD',
       unofficial_currency_code: '',
@@ -97,7 +115,7 @@ http://localhost:8080/auth/transactions/get
 ```
 //return one [cashFlow] for [one] list of transactions and one [sum] of transactions of accesstokens(all online accounts of all banks) within user_ids of given group_id and type: json  
 //combine all user_id's transactions into one transactions and get the indicators of that transactions  
-http://localhost:8080/auth/group/transactions/get  
+/auth/group/transactions/get  
 ```
 {
  cash_flow: {
@@ -116,7 +134,7 @@ http://localhost:8080/auth/group/transactions/get
   
  transactions:[
     {
-      account_id: '8eK70YNEvVuqeB6aLDRwfjnrKx5nnYIyd81Kx',
+      account_id: 'RwfjnrKx5nnYIyd81Kx',
       amount: 21.04,
       iso_currency_code: 'USD',
       unofficial_currency_code: '',
@@ -149,7 +167,7 @@ user_id:"user_id"
 cash_base: { depository_balance: 2021.93, credit_liability: 37.4 },
 accounts:[
 	  {
-		account_id: 'ZOq3A67oV5f9ObK8Q6jqHy8d9rL884UR0o498',
+		account_id: 'ObK8Q6jqHy8d9rL884UR0o498',
 		balances: {
 		  available: 283.51,
 		  current: 16.49,
@@ -163,9 +181,12 @@ accounts:[
 		subtype: 'credit card',
 		type: 'credit',
 		verification_status: ''
+		InstitutionId		string			`json:"institution_id"`
+		InstitutionName		string			`json:"institution_name"`
+		InstitutionLogo		string			`json:"institution_logo"`
 	  },
 	  {
-		account_id: '8eK70YNEvVuqeB6aLDRwfjnrKx5nnYIyd81Kx',
+		account_id: 'eB6aLDRwfjnrKx5nnYIyd81Kx',
 		balances: {
 		  available: 2021.93,
 		  current: 2021.93,
@@ -179,6 +200,9 @@ accounts:[
 		subtype: 'checking',
 		type: 'depository',
 		verification_status: ''
+		InstitutionId		string			`json:"institution_id"`
+		InstitutionName		string			`json:"institution_name"`
+		InstitutionLogo		string			`json:"institution_logo"`
 	  },...
 	]
 }
@@ -195,7 +219,7 @@ user_accounts_list:[
 	cash_base: { depository_balance: 2021.93, credit_liability: 37.4 },
 	accounts:[
 		  {
-			account_id: 'ZOq3A67oV5f9ObK8Q6jqHy8d9rL884UR0o498',
+			account_id: '6jqHy8d9rL884UR0o498',
 			balances: {
 			  available: 283.51,
 			  current: 16.49,
@@ -209,9 +233,12 @@ user_accounts_list:[
 			subtype: 'credit card',
 			type: 'credit',
 			verification_status: ''
+			InstitutionId		string			`json:"institution_id"`
+			InstitutionName		string			`json:"institution_name"`
+			InstitutionLogo		string			`json:"institution_logo"`
 		  },
 		  {
-			account_id: '8eK70YNEvVuqeB6aLDRwfjnrKx5nnYIyd81Kx',
+			account_id: '8qeB6aLDRwfjnrKx5nnYx',
 			balances: {
 			  available: 2021.93,
 			  current: 2021.93,
@@ -225,6 +252,9 @@ user_accounts_list:[
 			subtype: 'checking',
 			type: 'depository',
 			verification_status: ''
+			InstitutionId		string			`json:"institution_id"`
+			InstitutionName		string			`json:"institution_name"`
+			InstitutionLogo		string			`json:"institution_logo"`
 		  }
 		  ,...
 		]	

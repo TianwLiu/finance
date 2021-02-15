@@ -45,13 +45,13 @@ func main()  {
 
 			listenSignal()
 		}else{
-			fmt.Println("wrong args, please check")
+			fmt.Println("Wrong args, please check")
 			flag.Usage()
 			return
 		}
 	case args.start&&args.daemon:
 		go func() {
-			fmt.Println("enter daemon mode")
+			fmt.Println("Enter daemon mode")
 			startDaemon(args.systemPass,args.env,args.hostAndPort,args.crtFilePath,args.privateKeyPath)
 		}()
 		listenSignal()
@@ -70,7 +70,7 @@ func listenSignal(){
 		switch sig {
 		case syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGHUP:
 			fmt.Printf("get Signal as %v", sig)
-			fmt.Println(", system enter exit procedure")
+			fmt.Println(", System enter exit procedure")
 			systemExit()
 		}
 	}

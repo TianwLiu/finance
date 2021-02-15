@@ -10,7 +10,7 @@ import (
 
 //serve balances with user_id
 //return date type refer to data_type.go file
-func getBalances(webClient *gin.Context) {
+func getAccounts(webClient *gin.Context) {
 	userId:=webClient.Keys["id"].(string)
 	var realTime bool
 	if webClient.Query("real_time")=="true"{
@@ -28,20 +28,33 @@ func getBalances(webClient *gin.Context) {
 
 	// get balances for all accounts
 	//balanceResp, err := plaidClient.GetBalances(accessTokens[0])
-	var accounts []plaid.Account
-	var errs []error
+	var accounts []AccountPlus
+
 	for _,accessToken :=range accessTokens {
-
+		getItemReps,_:=plaidClient.GetItem(accessToken)
+		institutionId:=getItemReps.Item.InstitutionID
 		if realTime {
-			balanceResp, err := plaidClient.GetBalances(accessToken)
+			/*balanceResp, err := plaidClient.GetBalances(accessToken)
 			accounts = append(accounts, balanceResp.Accounts...)
-			errs = append(errs, err)
+			errs = append(errs, err)*/
 		}else{
-			balanceResp, err := plaidClient.GetAccounts(accessToken)
-			accounts = append(accounts, balanceResp.Accounts...)
-			errs = append(errs, err)
-		}
+			balanceResp, _ := plaidClient.GetAccounts(accessToken)
+			plaidAccounts:=balanceResp.Accounts
+			for _,plaidAccount:=range  plaidAccounts{
+				accounts=append(accounts, AccountPlus{
+					AccountID:          plaidAccount.AccountID,
+					Balances:           plaidAccount.Balances,
+					Mask:               plaidAccount.Mask,
+					Name:               plaidAccount.Name,
+					OfficialName:       plaidAccount.OfficialName,
+					Subtype:            plaidAccount.Subtype,
+					Type:               plaidAccount.Type,
+					VerificationStatus: plaidAccount.VerificationStatus,
+					InstitutionId:      institutionId,
+				})
+			}
 
+		}
 
 
 	}
@@ -53,7 +66,7 @@ func getBalances(webClient *gin.Context) {
 
 //serve group balances with user_id
 //return date type refer to data_type.go file
-func getGroupBalances(webClient *gin.Context) {
+func getGroupAccounts(webClient *gin.Context) {
 
 	groupId :=webClient.Keys["id"].(string)
 	var realTime bool
@@ -73,34 +86,46 @@ func getGroupBalances(webClient *gin.Context) {
 	//var accessTokens []string
 
 	var userAccountsList []UserAccounts
-	var groupAccounts []plaid.Account
+	var groupAccounts []AccountPlus
 	for _, userId :=range userIds {
-
 
 		//code dealing with one userID
 		accessTokens, _ := getUserAccessTokens(userId)
 		//accessTokens = append(accessTokens, accessTokensSub...)
 		// get balances for all accounts
 		//balanceResp, err := plaidClient.GetBalances(accessTokens[0])
-		var accounts []plaid.Account
-		var errs []error
+		var accounts []AccountPlus
 
-
-		for _,accessToken :=range accessTokens {
+		for _, accessToken := range accessTokens {
+			getItemReps, _ := plaidClient.GetItem(accessToken)
+			institutionId := getItemReps.Item.InstitutionID
 			if realTime {
-				balanceResp, err := plaidClient.GetBalances(accessToken)
+				/*balanceResp, err := plaidClient.GetBalances(accessToken)
 				accounts = append(accounts, balanceResp.Accounts...)
-				errs = append(errs, err)
-			}else{
-				balanceResp, err := plaidClient.GetAccounts(accessToken)
-				accounts = append(accounts, balanceResp.Accounts...)
-				errs = append(errs, err)
-			}
-		}
-		groupAccounts = append(groupAccounts, accounts...)
+				errs = append(errs, err)*/
+			} else {
+				balanceResp, _ := plaidClient.GetAccounts(accessToken)
+				plaidAccounts := balanceResp.Accounts
+				for _, plaidAccount := range plaidAccounts {
+					accounts = append(accounts, AccountPlus{
+						AccountID:          plaidAccount.AccountID,
+						Balances:           plaidAccount.Balances,
+						Mask:               plaidAccount.Mask,
+						Name:               plaidAccount.Name,
+						OfficialName:       plaidAccount.OfficialName,
+						Subtype:            plaidAccount.Subtype,
+						Type:               plaidAccount.Type,
+						VerificationStatus: plaidAccount.VerificationStatus,
+						InstitutionId:      institutionId,
+					})
+				}
 
-		if accounts !=nil {
-			userAccountsList = append(userAccountsList, UserAccounts{userId,NewCashBase(accounts) , accounts})
+			}
+			groupAccounts = append(groupAccounts, accounts...)
+
+			if accounts != nil {
+				userAccountsList = append(userAccountsList, UserAccounts{userId, NewCashBase(accounts), accounts})
+			}
 		}
 	}
 
@@ -121,16 +146,6 @@ func  getCashFlows(webClient *gin.Context)  {
 		return
 	}
 
-	//refresh plaid transactions' record, current client didn't buy refresh product.
-	/*
-		responseRefresh, err := plaidClient.RefreshTransactions(accessTokens);
-		if err!=nil  {
-			fmt.Println(err)
-			return
-		}else{
-			fmt.Println(responseRefresh.RequestID)
-		}
-	*/
 
 	today:=time.Now().Format("2006-01-02")
 	dayThreeMonthBefore:=time.Now().AddDate(0,-1*months,0).Format("2006-01-02")
@@ -168,16 +183,7 @@ func getTransactions(webClient *gin.Context) {
 		return
 	}
 
-	//refresh plaid transactions' record, current client didn't buy refresh product.
-	/*
-	responseRefresh, err := plaidClient.RefreshTransactions(accessTokens);
-	if err!=nil  {
-		fmt.Println(err)
-		return
-	}else{
-		fmt.Println(responseRefresh.RequestID)
-	}
-	*/
+
 
 	today:=time.Now().Format("2006-01-02")
 	dayThreeMonthBefore:=time.Now().AddDate(0,-3,0).Format("2006-01-02")
@@ -190,23 +196,12 @@ func getTransactions(webClient *gin.Context) {
 	}
 
 	sortTransactions(transactions)
-	/*const shorterm = "2006-01-02"
-	sort.Slice(transactions, func(i, j int) bool {
-		time1,_:=time.Parse(shorterm,transactions[i].Date)
-		time2,_:=time.Parse(shorterm,transactions[j].Date)
-		if time1.After(time2) {
-			return true
-		}
-		return false
-	})*/
 
-	//response.RequestID="sd"
-	//cashflow:=NewCashFlow(response)
 	if err!=nil{
 		webClient.JSON(200,err)
 	}else{
 		webClient.JSON(200,UserTransactions{
-			CashFlow:     NewCashFlow(transactions,accounts),
+			//CashFlow:     NewCashFlow(transactions,accounts),
 			Transactions: transactions,
 		})
 	}
@@ -230,16 +225,6 @@ func getGroupCashFlows(webClient *gin.Context)  {
 
 
 
-	//refresh plaid transactions' record, current client didn't buy refresh product.
-	/*
-		responseRefresh, err := plaidClient.RefreshTransactions(accessTokens);
-		if err!=nil  {
-			fmt.Println(err)
-			return
-		}else{
-			fmt.Println(responseRefresh.RequestID)
-		}
-	*/
 	if accessTokens==nil{
 		webClient.JSON(200,gin.H{
 			"flag":false,
@@ -258,23 +243,12 @@ func getGroupCashFlows(webClient *gin.Context)  {
 	}
 
 	sortTransactions(transactions)
-	//splitTransactions(transactions)
+
 	var cashFlows []CashFlow
 	for _,transactionsUnit:=range splitTransactions(transactions){
 		cashFlows=append(cashFlows, NewCashFlow(transactionsUnit,accounts))
 	}
-	/*const shorTerm = "2006-01-02"
-	sort.Slice(transactions, func(i, j int) bool {
-		time1,_:=time.Parse(shorTerm,transactions[i].Date)
-		time2,_:=time.Parse(shorTerm,transactions[j].Date)
-		if time1.After(time2) {
-			return true
-		}
-		return false
-	})*/
 
-	//response.RequestID="sd"
-	//cashflow:=NewCashFlow(response)
 	if err!=nil{
 		webClient.JSON(200,err.Error())
 	}else{
@@ -300,16 +274,6 @@ func getGroupTransactions(webClient *gin.Context )  {
 
 
 
-	//refresh plaid transactions' record, current client didn't buy refresh product.
-	/*
-		responseRefresh, err := plaidClient.RefreshTransactions(accessTokens);
-		if err!=nil  {
-			fmt.Println(err)
-			return
-		}else{
-			fmt.Println(responseRefresh.RequestID)
-		}
-	*/
 	if accessTokens==nil{
 		webClient.JSON(200,gin.H{
 			"flag":false,
@@ -327,23 +291,12 @@ func getGroupTransactions(webClient *gin.Context )  {
 		transactions = append(transactions, response.Transactions...)
 	}
 	sortTransactions(transactions)
-	/*const shorTerm = "2006-01-02"
-	sort.Slice(transactions, func(i, j int) bool {
-		time1,_:=time.Parse(shorTerm,transactions[i].Date)
-		time2,_:=time.Parse(shorTerm,transactions[j].Date)
-		if time1.After(time2) {
-			return true
-		}
-		return false
-	})*/
 
-	//response.RequestID="sd"
-	//cashflow:=NewCashFlow(response)
 	if err!=nil{
 		webClient.JSON(200,err.Error())
 	}else{
 		webClient.JSON(200,GroupTransactions{
-			CashFlow:     NewCashFlow(transactions,accounts),
+			//CashFlow:     NewCashFlow(transactions,accounts),
 			Transactions: transactions,
 		})
 	}

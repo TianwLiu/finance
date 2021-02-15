@@ -76,12 +76,12 @@ func bindWebApi()  {
 		auth.POST("/getLinkToken", getLinkToken)
 		auth.POST("/postPublicToken", postPublicToken)
 
-		auth.GET("/accounts/get",getBalances)
+		auth.GET("/accounts/get", getAccounts)
 		auth.GET("/transactions/get", getTransactions)
 		auth.GET("/cashflow/get", getCashFlows)
 
 
-		auth.GET("/group/accounts/get",getGroupBalances)
+		auth.GET("/group/accounts/get", getGroupAccounts)
 		auth.GET("/group/transactions/get", getGroupTransactions)
 		auth.GET("/group/cashflow/get", getGroupCashFlows)
 

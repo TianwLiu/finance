@@ -81,11 +81,11 @@ func startDaemon(systemPass string,ENV string,hostAndPort string,serverCrt strin
 			fmt.Println(err.Error())
 			break
 		}
-		fmt.Println("current pid is",os.Getpid())
-		fmt.Println("child pid is running as ",childCmd.Process.Pid)
+		fmt.Println("Current pid is",os.Getpid())
+		fmt.Println("Child pid is running as ",childCmd.Process.Pid)
 
 		if errChild:=childCmd.Wait();errChild==nil{
-			fmt.Println("child process has exit normally,now exit daemon process")
+			fmt.Println("Child process has exit normally,now exit daemon process")
 			break
 		}
 
@@ -150,12 +150,12 @@ func systemStart(systemPass string,ENV string,hostAndPort string,serverCrt strin
 func systemExit(){
 	if childCmd.Process==nil{
 
-		fmt.Println("no child process to terminate")
+		fmt.Println("No child process to terminate")
 
 	}else{
 		switch runtime.GOOS {
 		case "windows":
-			fmt.Println("[warning] current os is windows, please check zombie process by yourself")
+			fmt.Println("[Warning] Current os is windows, please check zombie process by yourself")
 		case "linux":
 			for true{
 
@@ -164,10 +164,10 @@ func systemExit(){
 					break
 				}else{
 					if err:=childCmd.Process.Signal(syscall.SIGTERM);err!=nil{
-						fmt.Println("terminate child process fail，error："+err.Error())
+						fmt.Println("Terminate child process fail，error："+err.Error())
 						break
 					}else{
-						fmt.Println("sent SIGTERM to Process-PID:",childCmd.Process.Pid,",now checking")
+						fmt.Println("Sent SIGTERM to Process-PID:",childCmd.Process.Pid,",now checking")
 					}
 				}
 
@@ -178,10 +178,10 @@ func systemExit(){
 
 	}
 
-	fmt.Println("system: shutting down")
+	fmt.Println("System: shutting down")
 	webServerShutdown()
 	closeDatabase()
-	fmt.Println("system: good byte!")
+	fmt.Println("System: good byte!")
 
 	os.Exit(0)
 }

@@ -8,8 +8,19 @@ type DataRoot struct {
 	WebGroups []WebGroup `json:"web_groups"`
 }
 
-
-
+type AccountPlus struct {
+	AccountID          string          `json:"account_id"`
+	Balances           plaid.AccountBalances `json:"balances"`
+	Mask               string          `json:"mask"`
+	Name               string          `json:"name"`
+	OfficialName       string          `json:"official_name"`
+	Subtype            string          `json:"subtype"`
+	Type               string          `json:"type"`
+	VerificationStatus string          `json:"verification_status"`
+	InstitutionId		string			`json:"institution_id"`
+/*	InstitutionName		string			`json:"institution_name"`
+	InstitutionLogo		string			`json:"institution_logo"`*/
+}
 
 
 
@@ -17,7 +28,8 @@ type DataRoot struct {
 type UserAccounts struct {
 	UserId   string          `json:"user_id"`
 	CashBase CashBase		`json:"cash_base"`
-	Accounts []plaid.Account `json:"accounts"`
+	//Accounts []plaid.Account `json:"accounts"`
+	Accounts []AccountPlus `json:"accounts"`
 }
 type GroupAccounts struct {
 	GroupId string `json:"group_id"`
